@@ -1,36 +1,43 @@
 ---
-title: "monty-onboarding"
+title: "monty onboarding"
 author: "Marc Baguelin"
 format: revealjs
 editor: visual
 ---
 
-## Background
+## Background (1)
 
 ```{r setup}
 library(monty)
 ```
 
-- The development of **dust** and **mcstate** were triggered by discussion between the epi and software engineering team
+-   The development of **dust** and **mcstate** were triggered by discussion between the epi and software engineering team
 
-- Creation was motivated with real-time fitting of stochastic discrete model
+-   Creation was motivated with real-time fitting of stochastic discrete model
 
-- *dust* deals with efficient parallel, *mcstate* was an inference-for-odin-model package
+-   *dust* deals with efficient parallel computation, *mcstate* was an inference-for-odin-model package
+
+## Background (2)
 
 - Developed during the pandemic and with a focus on Sequential Monte Carlo (SMC aka particle filter)
 
 - Workhorse algorithm pMCMC with bootstrap
 
-- More ideas have emerged (e.g. adaptive algorithm, nested hierarchical fittin, HMC, parallel tempering), but hindered by initial architecture
+- More ideas have emerged since but hindered by original architecture
+  - adaptive algorithm
+  - nested hierarchical fitting
+  - HMC
+  - parallel tempering 
 
-## What we call models?
+## What do we call models?
 
-:::: {.columns}
-
+:::::: columns
 ::: {.column width="45%"}
 SimCity models
 
-![](images/sim_city_models.webp){fig-align="left" style="position: absolute; bottom: 0; left: 0;" width=30%}
+Input (parameters) delivers real-life outputs
+
+![](images/sim_city_models.webp){fig-align="left" style="position: absolute; bottom: 0; left: 0;" width="30%"}
 :::
 
 ::: {.column width="10%"}
@@ -39,38 +46,36 @@ SimCity models
 
 ::: {.column width="45%"}
 Statistical models
-:::
 
-::::
+Abstract (parameter) space with a density function for which we want to sample from
+:::
+::::::
 
 ## A modular approach
 
-![odin playing with duplo bricks](images/odin-monty-duplo.webp){#fig-odin-duplo fig-alt="ALT" width=30%}
+![odin playing with duplo bricks](images/odin-monty-duplo.webp){#fig-odin-duplo fig-alt="ALT" width="30%"}
 
 ## The Basic Idea
 
 Draw samples from a model using Markov Chain Monte Carlo methods. To do this you will need:
 
-1. A **model**: 
-   - A `monty_model()` object 
-   - Computes a log probability density 
-   - May compute gradient of the log density or sample directly from parameter space.
-
-2. A **sampler**: 
-   - A method of drawing samples from the model’s distribution.
-   - Simplest sampler is `monty_sampler_random_walk()`, which implements a simple Metropolis algorithm.
-
-3. A **runner**: 
-   - Controls how chains are run (e.g., in sequence or in parallel).
+1.  A **model**:
+    -   A `monty_model()` object
+    -   Computes a log probability density
+    -   May compute gradient of the log density or sample directly from parameter space.
+2.  A **sampler**:
+    -   A method of drawing samples from the model’s distribution.
+    -   Simplest sampler is `monty_sampler_random_walk()`, which implements a simple Metropolis algorithm.
+3.  A **runner**:
+    -   Controls how chains are run (e.g., in sequence or in parallel).
 
 ## Composability
 
-- The system is **composable**: 
-  - Define a model for likelihood
-  - Define another model for prior 
-  - Choose a sampler and runner.
-  
-- `monty_model()` is flexible but not user-friendly. A high-level interface will help wrap models from other packages (e.g., [dust](https://mrc-ide.github.io/dust), [odin](https://mrc-ide.github.io/odin)).
+-   The system is **composable**:
+    -   Define a model for likelihood
+    -   Define another model for prior
+    -   Choose a sampler and runner.
+-   `monty_model()` is flexible but not user-friendly. A high-level interface will help wrap models from other packages (e.g., [dust](https://mrc-ide.github.io/dust), [odin](https://mrc-ide.github.io/odin)).
 
 ## An Example
 
@@ -180,8 +185,7 @@ abline(v = 3, col = "red")
 
 Convert the samples for use with other tools:
 
-- `coda::as.mcmc.list()` for MCMC
-- `posterior::as_draws_df()` for further analysis
+-   `coda::as.mcmc.list()` for MCMC
+-   `posterior::as_draws_df()` for further analysis
 
 See `vignette("samplers")` for more details.
-
