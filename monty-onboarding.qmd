@@ -13,25 +13,25 @@ editor: visual
 library(monty)
 ```
 
-- *dust* & *mcstate* triggered by epi + software team discussions
-- Motivated by real-time fitting of stochastic model
-- *dust* deals with efficient parallel computation
-- *mcstate* was an inference-for-odin-model package
+-   *dust* & *mcstate* triggered by epi + software team discussions
+-   Motivated by real-time fitting of stochastic model
+-   *dust* deals with efficient parallel computation
+-   *mcstate* was an inference-for-odin-model package
 
 ## More on mcstate
 
-- Developed during the pandemic (technical debt)
-- Focus on Sequential Monte Carlo (SMC aka particle filter)
-- Workhorse algorithm pMCMC with bootstrap
+-   Developed during the pandemic (technical debt)
+-   Focus on Sequential Monte Carlo (SMC aka particle filter)
+-   Workhorse algorithm pMCMC with bootstrap
 
 ## Beyond the "discrete-stochastic-odin" architecture
 
-- More ideas have emerged since 
-  - adaptive algorithm
-  - nested hierarchical fitting
-  - HMC
-  - parallel tempering
-- Hindered by *mcstate* architecture
+-   More ideas have emerged since
+    -   adaptive algorithm
+    -   nested hierarchical fitting
+    -   HMC
+    -   parallel tempering
+-   Hindered by *mcstate* architecture
 
 # monty general principles
 
@@ -48,6 +48,7 @@ Input (parameters) delivers real-life outputs
 
 ::: {.column width="10%"}
 <!-- empty column to create gap -->
+
 **vs**
 :::
 
