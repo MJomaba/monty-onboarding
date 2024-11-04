@@ -40,7 +40,7 @@ library(monty)
 
 ## What do we call models?
 
-:::::: columns
+::: columns
 ::: {.column width="45%"}
 **SimCity models**
 
@@ -62,7 +62,7 @@ Abstract (parameter) space with a density function
 
 !["An image of a simple statistical density model but in high dimension"](images/density_model.webp){fig-align="left" style="position: absolute; bottom: 0; left: 1200;" width="40%"}
 :::
-::::::
+:::
 
 ## Linking the two
 
@@ -216,7 +216,7 @@ abline(v = 3, col = "red")
 We'll start with a simple dataset of daily cases of some disease over time.
 
 ```{r}
-data <- read.csv("incidence.csv")
+data <- read.csv("data/incidence.csv")
 head(data)
 plot(cases ~ time, data, pch = 19, las = 1,
      xlab = "Time (days)", ylab = "Cases")
