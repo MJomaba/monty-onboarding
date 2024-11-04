@@ -26,12 +26,12 @@ library(monty)
 
 ## Beyond the particles
 
-- Particles suited for "discrete-stochastic-odin"
+-   Particles suited for "discrete-stochastic-odin"
 -   More ideas have emerged since
-    - adaptive algorithm
+    -   adaptive algorithm
     -   nested hierarchical fitting
     -   HMC
-    - switch between stochastic and deterministic  
+    -   switch between stochastic and deterministic\
     -   parallel tempering
     -   hybrid time schedule
 -   Development hindered by *mcstate* architecture
@@ -66,38 +66,38 @@ Abstract (parameter) space with a density function
 
 ## Linking the two
 
-- odin deals with SimCity models
-- inference algorithms deal with statistical model
-- Special functions were created in *mcstate* to embed the *odin* model into a statistical model
-- the compare function matches the states of the SimCity model with data to produce a density
-- the transform functions transform simple (*mcstate*) parameter object into a list of input for the (*odin*) SimCity model
+-   odin deals with SimCity models
+-   inference algorithms deal with statistical model
+-   Special functions were created in *mcstate* to embed the *odin* model into a statistical model
+-   the compare function matches the states of the SimCity model with data to produce a density
+-   the transform functions transform simple (*mcstate*) parameter object into a list of input for the (*odin*) SimCity model
 
 ## Issues
 
-- No "statistical model" object in mcstate - closest being the "particle filter"
-- Restricted to particle filter family
-- Somehow complicated to think about abstract parameters + transform fun + odin code + data + compare fun + sampler
-- Creates inefficiencies does not exploit that stat parameters are simpler
-- Difficult to separate the modelling from the inference
+-   No "statistical model" object in mcstate - closest being the "particle filter"
+-   Restricted to particle filter family
+-   Somehow complicated to think about abstract parameters + transform fun + odin code + data + compare fun + sampler
+-   Creates inefficiencies does not exploit that stat parameters are simpler
+-   Difficult to separate the modelling from the inference
 
 ## Design solution
 
-- compare function is an "observation" model -> moves to odin
-- model + data produces a likelihood that is a statistical model, voilà
-- transform was doing two functions:
-  - any transformation of parameters part of model in *odin*
-  - packer function (not a model) put the parameters in shape for stat or SimCity model, and tells what are fixed i.e. not statistical parameters
-- create statistical model object `monty_model()`
-- samplers deals with `monty_model()`
-- runners controls how chains are run (e.g., in sequence or in parallel)
+-   compare function is an "observation" model -\> moves to odin
+-   model + data produces a likelihood that is a statistical model, voilà
+-   transform was doing two functions:
+    -   any transformation of parameters part of model in *odin*
+    -   packer function (not a model) put the parameters in shape for stat or SimCity model, and tells what are fixed i.e. not statistical parameters
+-   create statistical model object `monty_model()`
+-   samplers deals with `monty_model()`
+-   runners controls how chains are run (e.g., in sequence or in parallel)
 
 ## A few cool things about monty models
 
-- You can combine them
-- There's different way to built them
-  - Directly write the density
-  - Use a DSL
-  - Built from an *odin* model likelihood
+-   You can combine them
+-   There's different way to built them
+    -   Directly write the density
+    -   Use a DSL
+    -   Built from an *odin* model likelihood
 
 ## A more modular approach
 
@@ -246,9 +246,10 @@ sir <- odin2::odin({
   gamma <- parameter()
   I0 <- parameter()
   N <- 1000
+  cases <- data()
+  cases ~ Poisson(incidence)
 }, quiet = TRUE)
 ```
-
 
 ## Simulation and Plotting
 
@@ -272,7 +273,7 @@ points(cases ~ time, data, pch = 19, col = "red")
 
 Now, we will compare the simulation to data using a **Poisson likelihood**. This asks, "What is the probability of observing this many cases with a mean equal to our modelled number of daily cases?"
 
-```r
+```{r, eval=FALSE}
 sir <- odin2::odin({
   ...
   cases <- data()
@@ -292,15 +293,15 @@ dust2::dust_likelihood_run(filter, pars)
 Run this multiple times to see the variance in likelihood:
 
 ```{r}
-ll1 <- replicate(100, dust2::dust_likelihood_run(filter, pars1))
-ll2 <- replicate(100, dust2::dust_likelihood_run(filter, pars2))
+ll1 <- replicate(100, dust2::dust_likelihood_run(filter, pars))
+ll2 <- replicate(100, dust2::dust_likelihood_run(filter, pars))
 ```
 
 ## Posterior with monty
 
 We combine the likelihood with a **prior** to create a **posterior**. We'll sample from the posterior using MCMC.
 
-```r
+``` r
 prior <- monty::monty_dsl({
   beta ~ Exponential(mean = 0.3)
   gamma ~ Exponential(mean = 0.1)
@@ -314,7 +315,7 @@ samples <- monty::monty_sample(posterior, sampler, 100, initial = sir_packer$pac
 
 Finally, we examine the MCMC results:
 
-```r
+``` r
 plot(samples$density, type = "l")
 plot(t(drop(samples$pars)), pch = 19, col = "#00000055")
 ```
@@ -323,27 +324,26 @@ plot(t(drop(samples$pars)), pch = 19, col = "#00000055")
 
 To improve the model mixing, we will:
 
-- Use a better proposal kernel.
-- Increase the number of particles.
-- Run multiple chains in parallel.
-  
-```r
+-   Use a better proposal kernel.
+-   Increase the number of particles.
+-   Run multiple chains in parallel.
+
+``` r
 vcv <- matrix(c(0.0005, 0.0003, 0.0003, 0.0003), 2, 2)
 filter <- dust2::dust_unfilter_create(sir(), 0, data, n_particles = 1000)
 samples <- monty::monty_sample(posterior, sampler, 1000, initial = sir_packer$pack(pars))
 ```
 
-```r
+``` r
 plot(samples$density, type = "l")
 plot(t(drop(samples$pars)), pch = 19, col = "#00000055")
 ```
 
----
+------------------------------------------------------------------------
 
 ## Conclusion
 
 We explored fitting an SIR model using `odin2`, `dust2`, and `monty`, compared it to data, and applied a particle filter to compute likelihoods. We also discussed MCMC sampling to explore parameter space.
-
 
 ## Further Tools
 
